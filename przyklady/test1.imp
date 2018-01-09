@@ -1,0 +1,8 @@
+( Dostęp to tablic )
+VAR
+    a b[100]
+BEGIN
+    a := 3;
+    b[a] := 10;
+    WRITE b[a];
+END

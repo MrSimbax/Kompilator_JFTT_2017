@@ -1,0 +1,81 @@
+( Dodawanie )
+VAR
+    w a b c[20] d[30]
+BEGIN
+    a := 10;
+    b := 20;
+    c[a] := 30;
+    d[b] := 40;
+
+    WRITE a;
+    WRITE b;
+    WRITE c[10];
+    WRITE d[20];
+
+
+    ( num + x )
+    w := 4 + 5;
+    WRITE w; ( 9 )
+
+    w := 4 + a;
+    WRITE w; ( 14 )
+
+    w := 4 + c[10];
+    WRITE w; ( 34 )
+
+    w := 4 + d[b];
+    WRITE w; ( 44 )
+
+
+    ( v + x )
+    w := a + 5;
+    WRITE w; ( 15 )
+
+    w := a + b;
+    WRITE w; ( 30 )
+
+    w := a + c[10];
+    WRITE w; ( 40 )
+
+    w := a + d[b];
+    WRITE w; ( 50 )
+
+
+    ( t[num] + x )
+    w := d[20] + 5;
+    WRITE w; ( 45 )
+
+    w := d[20] + b;
+    WRITE w; ( 60 )
+
+    w := d[20] + c[10];
+    WRITE w; ( 70 )
+
+    w := d[20] + c[a];
+    WRITE w; ( 70 )
+
+
+    ( t[v] + x )
+    w := d[b] + 5;
+    WRITE w; ( 45 )
+
+    w := d[b] + b;
+    WRITE w; ( 60 )
+
+    w := d[b] + c[10];
+    WRITE w; ( 70 )
+
+    w := d[b] + c[a];
+    WRITE w; ( 70 )
+
+    ( optymalizacje )
+    w := 4 + 5;
+    WRITE w; ( 9 )
+
+    w := a + 1;
+    WRITE w; ( 11 )
+
+    w := d[b] + d[b]; ( 80 )
+    WRITE w;
+
+END

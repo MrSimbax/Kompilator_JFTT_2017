@@ -1,0 +1,8 @@
+( Wczytywanie i wypisywanie dla tablic )
+VAR
+    a b[100]
+BEGIN
+    READ a;
+    READ b[a];
+    WRITE b[a];
+END

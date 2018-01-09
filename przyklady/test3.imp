@@ -1,0 +1,92 @@
+( Odejmowanie )
+VAR
+    w a b c[20] d[30]
+BEGIN
+    a := 10;
+    b := 20;
+    c[a] := 30;
+    d[b] := 40;
+
+    WRITE a;
+    WRITE b;
+    WRITE c[10];
+    WRITE d[20];
+
+
+    ( num - x )
+    w := 50 - 5;
+    WRITE w; ( 45 )
+
+    w := 50 - a;
+    WRITE w; ( 40 )
+
+    w := 50 - c[10];
+    WRITE w; ( 20 )
+
+    w := 50 - d[b];
+    WRITE w; ( 10 )
+
+
+    ( v - x )
+    a := 45;
+    w := a - 5;
+    WRITE w; ( 40 )
+
+    w := a - b;
+    WRITE w; ( 25 )
+
+    w := a - c[10];
+    WRITE w; ( 15 )
+
+    w := a - d[b];
+    WRITE w; ( 5 )
+
+    a := 10;
+
+    ( t[num] - x )
+    w := d[20] - 5;
+    WRITE w; ( 35 )
+
+    w := d[20] - b;
+    WRITE w; ( 20 )
+
+    w := d[20] - c[10];
+    WRITE w; ( 10 )
+
+    w := d[20] - c[a];
+    WRITE w; ( 10 )
+
+
+    ( t[v] - x )
+    w := d[b] - 5;
+    WRITE w; ( 35 )
+
+    w := d[b] - b;
+    WRITE w; ( 20 )
+
+    w := d[b] - c[10];
+    WRITE w; ( 10 )
+
+    w := d[b] - c[a];
+    WRITE w; ( 10 )
+
+    ( optymalizacje )
+    w := 50 - 50;
+    WRITE w; ( 0 )
+
+    w := 50 - 100;
+    WRITE w; ( 0 )
+
+    w := 10 - 5;
+    WRITE w; ( 5 )
+
+    w := a - 1;
+    WRITE w; ( 9 )
+
+    w := d[b] - d[b];
+    WRITE w; ( 0 )
+
+    w := a - 11;
+    WRITE w; ( 0 )
+
+END

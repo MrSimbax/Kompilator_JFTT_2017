@@ -1,0 +1,44 @@
+VAR
+a b c f g h i j s t u w d[33] e[22] k l m n o p r
+BEGIN
+  a := 1;
+  b := 10;
+  d[1] := 1;
+  e[1] := 2;
+
+
+  f := 5 - 1;
+  g := 5 - a;
+  h := b - 5;
+  i := b - a;
+  j := 5 - e[1];
+  k := 5 - e[a];
+
+  l := e[1] - 1;
+  m := e[a] - 1;
+  o := b - e[1];
+  p := b - e[a];
+
+  r := e[1] - a;
+  s := e[a] - a;
+  t := e[1] - e[a];
+  u := e[a] - e[1];
+
+  WRITE f; (4)
+  WRITE g; (4)
+  WRITE h; (5)
+  WRITE i; (9)
+  WRITE j; (3)
+  WRITE k; (3)
+  WRITE l; (1)
+  WRITE m; (1)
+  WRITE o; (8)
+  WRITE p; (8)
+  WRITE r; (1)
+  WRITE s; (1)
+  WRITE t; (0)
+  WRITE u; (0)
+
+
+
+END

@@ -1,0 +1,60 @@
+( Mnożenie )
+VAR
+    w a b c[20] d[30]
+BEGIN
+    w := 0 * 0;
+    WRITE w; ( 0 )
+    w := 0 * 1;
+    WRITE w; ( 0 )
+    w := 1 * 0;
+    WRITE w; ( 0 )
+    w := 1 * 1;
+    WRITE w; ( 1 )
+    w := 1 * 2;
+    WRITE w; ( 2 )
+    w := 2 * 1;
+    WRITE w; ( 2 )
+    w := 3 * 5;
+    WRITE w; ( 15 )
+    w := 5555 * 5;
+    WRITE w; ( 27775 )
+
+    a := 0;
+    w := a * 0;
+    WRITE w; ( 0 )
+    a := 0;
+    w := a * 1;
+    WRITE w; ( 0 )
+    a := 1;
+    w := a * 0;
+    WRITE w; ( 0 )
+    a := 1;
+    w := a * 1;
+    WRITE w; ( 1 )
+    a := 1;
+    w := a * 2;
+    WRITE w; ( 2 )
+    a := 2;
+    w := a * 1;
+    WRITE w; ( 2 )
+    a := 3;
+    w := a * 5;
+    WRITE w; ( 15 )
+    a := 5555;
+    w := a * 5;
+    WRITE w; ( 27775 )
+
+    a := 5555;
+    w := a * 2048;
+    WRITE w; ( 11376640 )
+
+    a := 5555;
+    b := 2047;
+    w := a * b;
+    WRITE w; ( 11371085 )
+
+    a := 2047;
+    b := 5555;
+    w := a * b;
+    WRITE w; ( 11371085 )
+END

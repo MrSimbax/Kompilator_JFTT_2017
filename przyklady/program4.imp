@@ -1,0 +1,28 @@
+( program4.imp )
+VAR
+	b c j t g
+BEGIN
+	g := 111111111111;
+	j := 111111 - 111110;
+	READ b;
+	READ c;
+	IF b > 50 THEN
+		b := b % 50;	
+	ENDIF
+	t := b + 1000;
+	t := t - 1;
+	WRITE t;
+	FOR i FROM b TO t DO
+		WRITE i;
+		t := i / j;
+		c := c + t;
+		t := i % i;
+		c := c + t;
+		WRITE t;
+		WRITE c;
+		WRITE g;
+	ENDFOR
+	WRITE t;
+	WRITE c;
+END
+

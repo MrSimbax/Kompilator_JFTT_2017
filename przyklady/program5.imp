@@ -1,0 +1,21 @@
+( program5.imp )
+VAR
+  tab[999999999] a b c d n 
+BEGIN
+  READ a;
+  tab[a] := 9;
+
+  n := 999999998;
+  tab[n] := tab[a]; ( tab[n] = 9 )
+  
+  b :=  111111111;
+  b := b * tab[a]; ( b = 111111111 * 9 = 999999999 )
+  
+  c :=  90909090;
+  READ d;
+  
+  tab[a] := b - c; ( 999999999 - 90909090 = 909090909 )
+  tab[n] := tab[a] / d;
+  WRITE tab[a];
+  WRITE tab[n];
+END 
