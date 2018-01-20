@@ -57,7 +57,6 @@ def run_program(imp_name, given_input, expected_output):
         match = re.search(b'.*> (\d+)', line)
         assert match
         output += match.group(1) + b'\n'
-        print(line)
     assert output == expected_output
     match = re.search(b'czas: (\d+)', lines[-2])
     return match.group(1)
@@ -141,3 +140,49 @@ def test_test7():
 
 def test_test8():
     run_program('test8', b'', b'0\n0\n0\n1\n1\n0\n1\n0\n1\n1\n0\n0\n1\n1\n0\n1\n0\n1\n0\n1\n0\n1\n2\n')
+
+def test_program3():
+    run_program('program3', b'20\n10\n', b'67108864020\n20370359763344860862684456884093781610514683936659362506361404493543812997633367061833973760\n1001\n3999999992000000003\n')
+
+def test_program4():
+    with open('program4_out.txt', 'rb') as f:
+        run_program('program4', b'100\n3\n', f.read())
+    with open('program4_out2.txt', 'rb') as f:
+        run_program('program4', b'99\n3\n', f.read())
+
+def test_program5():
+    run_program('program5', b'5\n33\n', b'909090909\n27548209\n')
+
+def test_program8():
+    run_program('program8', b'34\n15\n56\n', b'529\n4371\n0\n')
+
+def test_program9():
+    run_program('program9', b'', b'0\n23\n44\n63\n80\n95\n108\n119\n128\n135\n140\n143\n144\n143\n140\n135\n128\n119\n108\n95\n80\n63\n44\n23\n0\n')
+
+def test_program11():
+    run_program('program11', b'9\n7\n6', b'1111111111\n9\n7\n6\n19\n1\n1\n2\n1111111111\n9\n7\n6\n19\n1\n28\n196\n')
+    run_program('program11', b'9\n6\n7', b'1111111111\n9\n6\n7\n19\n2\n1\n3\n1111111111\n9\n6\n7\n19\n2\n28\n168\n')
+    run_program('program11', b'7\n9\n6', b'1111111111\n7\n9\n6\n17\n1\n1\n2\n1111111111\n7\n9\n6\n17\n1\n24\n168\n')
+    run_program('program11', b'7\n6\n9', b'1111111111\n7\n6\n9\n17\n4\n1\n5\n1111111111\n7\n6\n9\n17\n4\n26\n4\n')
+    run_program('program11', b'6\n9\n7', b'1111111111\n6\n9\n7\n16\n2\n1\n3\n1111111111\n6\n9\n7\n16\n2\n23\n3\n')
+    run_program('program11', b'6\n7\n9', b'1111111111\n6\n7\n9\n16\n4\n1\n5\n1111111111\n6\n7\n9\n16\n4\n25\n4\n')
+
+def test_program11():
+    run_program('program11', b'9\n7\n6', b'1111111111\n9\n7\n6\n19\n1\n1\n2\n1111111111\n9\n7\n6\n19\n1\n28\n196\n')
+    run_program('program11', b'9\n6\n7', b'1111111111\n9\n6\n7\n19\n2\n1\n3\n1111111111\n9\n6\n7\n19\n2\n28\n168\n')
+    run_program('program11', b'7\n9\n6', b'1111111111\n7\n9\n6\n17\n1\n1\n2\n1111111111\n7\n9\n6\n17\n1\n24\n168\n')
+    run_program('program11', b'7\n6\n9', b'1111111111\n7\n6\n9\n17\n4\n1\n5\n1111111111\n7\n6\n9\n17\n4\n26\n4\n')
+    run_program('program11', b'6\n9\n7', b'1111111111\n6\n9\n7\n16\n2\n1\n3\n1111111111\n6\n9\n7\n16\n2\n23\n3\n')
+    run_program('program11', b'6\n7\n9', b'1111111111\n6\n7\n9\n16\n4\n1\n5\n1111111111\n6\n7\n9\n16\n4\n25\n4\n')
+
+def test_program12():
+    run_program('program12', b'0\n1\n2\n3', b'0\n0\n0\n0\n0\n1111111111\n0\n0\n0\n0\n1111111111\n0\n0\n0\n0\n1111111111\n1\n0\n0\n1\n1111111111\n')
+    run_program('program12', b'3\n2\n1\n0', b'0\n0\n0\n3\n0\n1111111111\n0\n0\n3\n3\n1111111111\n0\n0\n0\n1\n1111111111\n4\n0\n0\n1\n1111111111\n')
+    run_program('program12', b'1\n1\n1\n1', b'0\n0\n0\n1\n1\n1111111111\n0\n0\n1\n1\n1111111111\n0\n0\n0\n0\n1111111111\n2\n0\n0\n1\n1111111111\n')
+    run_program('program12', b'13\n0\n0\n0', b'0\n0\n0\n13\n0\n1111111111\n0\n0\n13\n13\n1111111111\n0\n0\n0\n1\n1111111111\n14\n0\n0\n1\n1111111111\n')
+
+def test_program13():
+    run_program('program13', b'0\n1\n2\n3', b'999999999\n0\n0\n4\n1\n0\n999999999\n1\n1\n6\n1\n0\n')
+    run_program('program13', b'3\n2\n1\n0', b'999999999\n6\n0\n1\n0\n0\n999999999\n5\n0\n0\n0\n1\n')
+    run_program('program13', b'1\n1\n1\n1', b'999999999\n2\n0\n1\n1\n0\n999999999\n2\n0\n1\n1\n0\n')
+    run_program('program13', b'13\n0\n0\n0', b'999999999\n26\n0\n0\n0\n0\n999999999\n13\n0\n0\n0\n0\n')
