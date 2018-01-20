@@ -326,6 +326,7 @@ bool is_power_of_two(cl_I num)
     return (std::count(bin_num.begin(), bin_num.end(), '1') == 1);
 }
 
+// 3,4,5
 void multiply(Variable *v1, Variable *v2)
 {
     cl_I ida = 3;
@@ -374,6 +375,7 @@ void multiply(Variable *v1, Variable *v2)
     mr_load(idr); // return
 }
 
+// 3,4,5,6
 void divide(Variable *v1, Variable *v2)
 {
     cl_I ida = 3;
@@ -440,6 +442,7 @@ void divide(Variable *v1, Variable *v2)
     mr_zero(); // Return 0
 }
 
+// 3,4,5,6
 void modulo(Variable *v1, Variable *v2)
 {
     cl_I ida = 3;
@@ -504,6 +507,7 @@ void modulo(Variable *v1, Variable *v2)
     mr_zero(); // Return 0
 }
 
+// 0,1
 void sub_from_acc(Variable *v2)
 {
     if (v2->isArray && v2->isIndexAVariable)
@@ -516,11 +520,21 @@ void sub_from_acc(Variable *v2)
     }
     else if (v2->name == "@")
     {
-        mr_store(0);
-        calculate_num_to_acc(v2->value);
-        mr_store(1);
-        mr_load(0);
-        mr_sub(1);
+        if (v2->value <= 40)
+        {
+            for (int i = 0; i < v2->value; ++i)
+            {
+                mr_dec();
+            }
+        }
+        else
+        {
+            mr_store(0); // 10
+            calculate_num_to_acc(v2->value); // >=1
+            mr_store(1); // 10
+            mr_load(0); // 10
+            mr_sub(1); // 10
+        }
     }
     else
     {
@@ -838,19 +852,30 @@ expression:
             {
                 std::swap(v1, v2);
             }
-
-            load_variable_to_accumulator(*v1);
-            if (v2->isArray && v2->isIndexAVariable)
+            
+            if (v1->name == "@" && v1->value <= 40)
             {
-                mr_store(0);
-                calculate_array_index(*v2);
-                mr_store(1);
-                mr_load(0);
-                mr_addi(1);
+                load_variable_to_accumulator(*v2);
+                for (int i = 0; i < v1->value; ++i)
+                {
+                    mr_inc();
+                }
             }
             else
             {
-                mr_add(get_real_index(*v2));
+                load_variable_to_accumulator(*v1);
+                if (v2->isArray && v2->isIndexAVariable)
+                {
+                    mr_store(0);
+                    calculate_array_index(*v2);
+                    mr_store(1);
+                    mr_load(0);
+                    mr_addi(1);
+                }
+                else
+                {
+                    mr_add(get_real_index(*v2));
+                }
             }
         }
         accumulator = empty;
@@ -1082,6 +1107,9 @@ expression:
 
 condition:
       value OP_EQ value {
+        // -1 warunek zawsze prawdziwy
+        // -2 warunek zawsze fałszywy
+
         Variable *v1 = $1;
         Variable *v2 = $3;
 

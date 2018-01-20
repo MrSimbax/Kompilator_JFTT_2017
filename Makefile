@@ -6,8 +6,9 @@ kompilator: kompilator.y kompilator.l
 	g++ -std=c++11 -l cln -o kompilator lex.yy.c kompilator.tab.c
 
 clean:
-	rm kompilator kompilator.tab.c kompilator.tab.h lex.yy.c
-	rm test/*.mr
+	rm -f kompilator kompilator.tab.c kompilator.tab.h lex.yy.c
+	rm -f test/*.mr
+	rm -fr test/__pycache__
 
 .PHONY: test
 
