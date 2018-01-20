@@ -7,3 +7,9 @@ kompilator: kompilator.y kompilator.l
 
 clean:
 	rm kompilator kompilator.tab.c kompilator.tab.h lex.yy.c
+	rm test/*.mr
+
+.PHONY: test
+
+test: kompilator
+	cd test && pytest

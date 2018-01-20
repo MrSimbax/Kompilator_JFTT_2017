@@ -1,0 +1,6 @@
+VAR
+BEGIN
+    FOR i FROM 10 DOWNTO 0 DO
+        WRITE i;
+    ENDFOR
+END

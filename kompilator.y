@@ -31,6 +31,7 @@ map<string, Variable*> memory;
 stack<size_t> condition_begin_ips;
 stack<size_t> condition_end_ips;
 stack<size_t> else_begin_ips;
+stack<cl_I> temp_vars;
 
 // Liczba zadeklarowanych zmiennych.
 // Pierwsze komórki są zarezerwowane dla kompilatora.
@@ -66,6 +67,20 @@ Variable* put_new_variable(string name, cl_I arrayLength) {
     return memory[name];
 }
 
+Variable* put_new_temp_variable(string name) {
+    if (memory.count(name) > 0) {
+        return nullptr;
+    }
+    Variable *v = new Variable();
+    v->name = name;
+    v->value = 1;
+    v->isTemporary = true;
+    v->index = variablesCount + temp_vars.size();
+    temp_vars.push(v->index);
+    memory[name] = v;
+    return memory[name];
+}
+
 /**
  * Zwraca zmienną o podanej nazwie.
  * Jeśli nie ma takiej zmiennej, zwraca nullptr.
@@ -77,10 +92,11 @@ Variable* get_variable(string name) {
     return memory[name];
 }
 
-size_t delete_variable(string name) {
+size_t delete_temp_variable(string name) {
     Variable *v = get_variable(name);
     if (v != nullptr) {
         delete v;
+        temp_vars.pop();
     }
     return memory.erase(name);
 }
@@ -648,14 +664,14 @@ command:
     | FOR PIDENTIFIER FROM value TO value {
         string *name = $2;
         *name = *name;
-        Variable *iter = put_new_variable(*name, 0);
+        Variable *iter = put_new_temp_variable(*name);
         if (iter == nullptr) {
             string errorMessage = "zmienna " + *name + " już została zadeklarowana";
             yyerror(errorMessage.c_str());
         }
         iter->isTemporary = true;
         iter->value = 1;
-        Variable *iterCond = put_new_variable(*name + "'", 0);
+        Variable *iterCond = put_new_temp_variable(*name + "'");
         iterCond->isTemporary = true;
         iterCond->value = 1;
         Variable *min = $4;
@@ -696,8 +712,8 @@ command:
         mr_jump(condIp);
         update_jump(condIp, ip());
 
-        delete_variable(iter->name);
-        delete_variable(iterCond->name);
+        delete_temp_variable(iterCond->name);
+        delete_temp_variable(iter->name);
 
         accumulator = empty;
         accumulator.value = 1;
@@ -707,14 +723,14 @@ command:
     | FOR PIDENTIFIER FROM value DOWNTO value {
         string *name = $2;
         *name = *name;
-        Variable *iter = put_new_variable(*name, 0);
+        Variable *iter = put_new_temp_variable(*name);
         if (iter == nullptr) {
             string errorMessage = "zmienna " + *name + " już została zadeklarowana";
             yyerror(errorMessage.c_str());
         }
         iter->isTemporary = true;
         iter->value = 1;
-        Variable *iterCond = put_new_variable(*name + "'", 0);
+        Variable *iterCond = put_new_temp_variable(*name + "'");
         iterCond->isTemporary = true;
         iterCond->value = 1;
         Variable *min = $6;
@@ -754,8 +770,8 @@ command:
         mr_jump(condIp);
         update_jump(condIp, ip());
 
-        delete_variable(iter->name);
-        delete_variable(iterCond->name);
+        delete_temp_variable(iterCond->name);
+        delete_temp_variable(iter->name);
 
         accumulator = empty;
         accumulator.value = 1;

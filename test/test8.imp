@@ -1,0 +1,24 @@
+VAR
+    a
+BEGIN
+    a := 2;
+    FOR i FROM 0 TO 1 DO
+        WRITE i;
+        FOR j FROM 0 TO 1 DO
+            WRITE j;
+            FOR k FROM 0 TO 1 DO
+                WRITE k;
+            ENDFOR
+        ENDFOR
+        FOR k FROM 0 TO 1 DO
+            WRITE k;
+        ENDFOR
+    ENDFOR
+    FOR i FROM 0 TO 1 DO
+        WRITE i;
+    ENDFOR
+    FOR k FROM 0 TO 1 DO
+        WRITE k;
+    ENDFOR
+    WRITE a;
+END

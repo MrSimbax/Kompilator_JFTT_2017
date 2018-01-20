@@ -2,5 +2,9 @@
 *.tab.h
 *.yy.c
 kompilator
+interpreter/interpreter
+interpreter/interpreter-cln
 bin/
 .vscode/
+.cache
+__pycache__
