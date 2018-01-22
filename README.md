@@ -30,7 +30,7 @@ Testy automatyczne wymagają zainstalowanego interpretera języka `Python`
 w wersji `3.5+` oraz biblioteki [`pytest`](https://pytest.org/).
 
 Testy wymagają skompilowanego interpretera. W tym celu
-należy wykonać polecenie `make` w folderze `interpreter`.
+można wykonać polecenie `make` w folderze `interpreter`.
 
 Aby uruchomić testy, wystarczy wykonać polecenie `make test`.
 

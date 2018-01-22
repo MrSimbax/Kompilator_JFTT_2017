@@ -35,6 +35,9 @@ stack<cl_I> temp_vars;
 
 // Liczba zadeklarowanych zmiennych.
 // Pierwsze komórki są zarezerwowane dla kompilatora.
+// 0,1 -- ładowanie
+// 2,3,4,5 -- expression
+// 6 -- condition
 cl_I variablesCount = 10;
 
 size_t ip()
@@ -340,12 +343,11 @@ bool is_power_of_two(cl_I num)
     return (std::count(bin_num.begin(), bin_num.end(), '1') == 1);
 }
 
-// 3,4,5
 void multiply(Variable *v1, Variable *v2)
 {
-    cl_I ida = 3;
-    cl_I idb = 4;
-    cl_I idr = 5;
+    cl_I ida = 2;
+    cl_I idb = 3;
+    cl_I idr = 4;
 
     load_variable_to_accumulator(*v1);
     mr_store(ida);
@@ -391,10 +393,10 @@ void multiply(Variable *v1, Variable *v2)
 // 3,4,5,6
 void divide(Variable *v1, Variable *v2)
 {
-    cl_I ida = 3;
-    cl_I idb = 4;
-    cl_I idq = 5;
-    cl_I idt = 6;
+    cl_I ida = 2;
+    cl_I idb = 3;
+    cl_I idq = 4;
+    cl_I idt = 5;
 
     load_variable_to_accumulator(*v1);
     mr_store(ida); // a
@@ -458,10 +460,10 @@ void divide(Variable *v1, Variable *v2)
 // 3,4,5,6
 void modulo(Variable *v1, Variable *v2)
 {
-    cl_I ida = 3;
-    cl_I idb = 4;
-    cl_I idq = 5;
-    cl_I idt = 6;
+    cl_I ida = 2;
+    cl_I idb = 3;
+    cl_I idq = 4;
+    cl_I idt = 5;
 
     load_variable_to_accumulator(*v1);
     mr_store(ida); // a
@@ -525,11 +527,11 @@ void sub_from_acc(Variable *v2)
 {
     if (v2->isArray && v2->isIndexAVariable)
     {
-        mr_store(0);
+        mr_store(2);
         calculate_array_index(*v2);
-        mr_store(1);
-        mr_load(0);
-        mr_subi(1);
+        mr_store(3);
+        mr_load(2);
+        mr_subi(3);
     }
     else if (v2->name == "@")
     {
@@ -541,16 +543,21 @@ void sub_from_acc(Variable *v2)
         {
             for (int i = 0; i < v2->value; ++i)
             {
+                if (ip() > 0 && commands[ip()-1] == "INC")
+                {
+                    commands.pop_back();
+                    continue;
+                }
                 mr_dec();
             }
         }
         else
         {
-            mr_store(0); // 10
+            mr_store(2); // 10
             calculate_num_to_acc(v2->value); // >=1
-            mr_store(1); // 10
-            mr_load(0); // 10
-            mr_sub(1); // 10
+            mr_store(3); // 10
+            mr_load(2); // 10
+            mr_sub(3); // 10
         }
     }
     else
@@ -864,46 +871,60 @@ expression:
                 std::swap(v1, v2);
             }
             
-            if (v1->name == "@" && v1->value <= 40)
+            if (same_memory_cell(accumulator, *v2))
             {
-                load_variable_to_accumulator(*v2);
-                for (int i = 0; i < v1->value; ++i)
+                if (v1->isArray && v1->isIndexAVariable)
                 {
-                    mr_inc();
+                    mr_store(2);
+                    calculate_array_index(*v1);
+                    mr_store(3);
+                    mr_load(2);
+                    mr_addi(3);
+                }
+                else if (v1->name == "@")
+                {
+                    if (v1->value <= 40)
+                    {
+                        for (int i = 0; i < v1->value; ++i)
+                        {
+                            mr_inc();
+                        }
+                    }
+                    else
+                    {
+                        mr_store(2);
+                        calculate_num_to_acc(v1->value);
+                        mr_store(3);
+                        mr_load(2);
+                        mr_add(3);
+                    }
+                }
+                else
+                {
+                    mr_add(get_real_index(*v1));
                 }
             }
             else
             {
-                if (same_memory_cell(accumulator, *v2))
+                if (v2->isArray && v2->isIndexAVariable)
                 {
-                    if (v1->isArray && v1->isIndexAVariable)
+                    calculate_array_index(*v2);
+                    mr_store(2);
+                    load_variable_to_accumulator(*v1);
+                    mr_addi(2);
+                }
+                else if (v1->name == "@" && v1->value < 10)
+                {
+                    load_variable_to_accumulator(*v2);
+                    for (int i = 0; i < v1->value; ++i)
                     {
-                        mr_store(0);
-                        calculate_array_index(*v1);
-                        mr_store(1);
-                        mr_load(0);
-                        mr_addi(1);
-                    }
-                    else
-                    {
-                        mr_add(get_real_index(*v1));
+                        mr_inc();
                     }
                 }
                 else
                 {
                     load_variable_to_accumulator(*v1);
-                    if (v2->isArray && v2->isIndexAVariable)
-                    {
-                        mr_store(0);
-                        calculate_array_index(*v2);
-                        mr_store(1);
-                        mr_load(0);
-                        mr_addi(1);
-                    }
-                    else
-                    {
-                        mr_add(get_real_index(*v2));
-                    }
+                    mr_add(get_real_index(*v2));
                 }
             }
         }
@@ -1145,10 +1166,10 @@ condition:
         // a = b <=> (a - b) + (b - a) = 0
         load_variable_to_accumulator(*v1);
         sub_from_acc(v2);
-        mr_store(3);
+        mr_store(6);
         load_variable_to_accumulator(*v2);
         sub_from_acc(v1);
-        mr_add(3);
+        mr_add(6);
         mr_jzero(ip()+2);
         condition_end_ips.push(ip());
         mr_jump(-1);
@@ -1170,10 +1191,10 @@ condition:
         condition_begin_ips.push(ip());
         load_variable_to_accumulator(*v1);
         sub_from_acc(v2);
-        mr_store(3);
+        mr_store(6);
         load_variable_to_accumulator(*v2);
         sub_from_acc(v1);
-        mr_add(3);
+        mr_add(6);
         condition_end_ips.push(ip());
         mr_jzero(-1);
 
