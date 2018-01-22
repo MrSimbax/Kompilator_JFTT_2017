@@ -186,3 +186,6 @@ def test_program13():
     run_program('program13', b'3\n2\n1\n0', b'999999999\n6\n0\n1\n0\n0\n999999999\n5\n0\n0\n0\n1\n')
     run_program('program13', b'1\n1\n1\n1', b'999999999\n2\n0\n1\n1\n0\n999999999\n2\n0\n1\n1\n0\n')
     run_program('program13', b'13\n0\n0\n0', b'999999999\n26\n0\n0\n0\n0\n999999999\n13\n0\n0\n0\n0\n')
+
+def test_test9():
+    run_program('test9', b'3\n', b'42\n')

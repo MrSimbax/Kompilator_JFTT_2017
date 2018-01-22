@@ -252,19 +252,20 @@ void calculate_num_to_acc(cl_I num)
 }
 
 // Wynik w komórce 1
-void calculate_array_index(Variable v)
+void calculate_array_index(Variable &v)
 {
     mr_load(get_real_index(v));
     mr_add(v.index);
 }
 
 // 0, 1
-void store_accumulator_in_variable(Variable v)
+void store_accumulator_in_variable(Variable &v)
 {
     if (v.isTemporary)
     {
         string errorMessage = "modyfikacja zmiennej iterujacej " + v.name.substr(1);
         yyerror(errorMessage.c_str());
+        return;
     }
 
     if (!v.isArray)
@@ -286,6 +287,12 @@ void store_accumulator_in_variable(Variable v)
             mr_storei(1);
         }
     }
+
+    if (v.value < 0)
+    {
+        v.value = 1; // zainicjalizowana
+    }
+    accumulator = v;
 }
 
 void load_variable_to_accumulator(Variable v)
@@ -294,6 +301,13 @@ void load_variable_to_accumulator(Variable v)
         string errorMessage = "niezainicjalizowana zmienna " + v.name;
         yyerror(errorMessage.c_str());
     }
+
+    if (same_memory_cell(accumulator, v))
+    {
+        return;
+    }
+
+    accumulator = v;
 
     if (v.name == "@")
     {
@@ -338,11 +352,11 @@ void multiply(Variable *v1, Variable *v2)
     load_variable_to_accumulator(*v2);
     mr_store(idb);
     mr_sub(ida);
-    mr_jzero(ip()+18); // if a > b (0 > b - a)
+    mr_jzero(ip()+17); // if a > b (0 > b - a)
     mr_zero();
     mr_store(idr); // ret = 0
     mr_load(ida); // while a > 0
-    mr_jzero(ip()+30);
+    mr_jzero(ip()+29);
     mr_inc(); // if a & 1
     mr_jodd(ip()+4);
     mr_load(idr);
@@ -355,7 +369,6 @@ void multiply(Variable *v1, Variable *v2)
     mr_shr();
     mr_store(ida); // a <<= 1
     mr_jump(ip()-12); // endwhile
-    mr_jump(ip()+17);
     mr_zero(); // else (a <= b)
     mr_store(idr); // ret = 0
     mr_load(idb); // while b > 0
@@ -520,7 +533,11 @@ void sub_from_acc(Variable *v2)
     }
     else if (v2->name == "@")
     {
-        if (v2->value <= 40)
+        if (v2->value == 0)
+        {
+            return;
+        }
+        else if (v2->value <= 40)
         {
             for (int i = 0; i < v2->value; ++i)
             {
@@ -540,6 +557,7 @@ void sub_from_acc(Variable *v2)
     {
         mr_sub(get_real_index(*v2));
     }
+    accumulator = empty;
 }
 
 void update_jump(size_t k, size_t j)
@@ -639,9 +657,6 @@ command:
         Variable *a = $1;
 
         store_accumulator_in_variable(*a);
-        a->value = 1;
-
-        accumulator = *a;
 
         if (a->isArray) {
             delete a;
@@ -656,16 +671,19 @@ command:
         mr_jump(-1);
         
         update_jump(end, ip());
+        accumulator = empty;
     } ELSE commands {
         size_t begin = else_begin_ips.top();
         else_begin_ips.pop();
         update_jump(begin, ip());
+        accumulator = empty;
     } ENDIF
     | IF condition THEN commands {
         condition_begin_ips.pop();
         size_t end = condition_end_ips.top();
         condition_end_ips.pop();
         update_jump(end, ip());
+        accumulator = empty;
     } ENDIF
     | WHILE condition DO commands {
         size_t begin = condition_begin_ips.top();
@@ -674,6 +692,7 @@ command:
         condition_end_ips.pop();
         mr_jump(begin);
         update_jump(end, ip());
+        accumulator = empty;
     } ENDWHILE
     | FOR PIDENTIFIER FROM value TO value {
         string *name = $2;
@@ -798,9 +817,6 @@ command:
 
         store_accumulator_in_variable(*v);
 
-        v->value = 1;
-        accumulator = *v;
-
         if (v->isArray) {
             delete v;
         }
@@ -810,11 +826,7 @@ command:
         // cerr << accumulator.name << endl;
         // cerr << v->name << endl;
         // cerr << endl;
-        if (!same_memory_cell(accumulator, *v))
-        {
-            load_variable_to_accumulator(*v);
-            accumulator = *v;
-        }
+        load_variable_to_accumulator(*v);
         mr_put();
         if (v->name == "@" || v->isArray) {
             delete v;
@@ -826,7 +838,6 @@ expression:
       value { // Assumption: the value of expression is in accumulator
         Variable *v = $1;
         load_variable_to_accumulator(*v);
-        accumulator = *v;
         if (v->name == "@" || v->isArray) {
             delete v;
         }
@@ -863,18 +874,36 @@ expression:
             }
             else
             {
-                load_variable_to_accumulator(*v1);
-                if (v2->isArray && v2->isIndexAVariable)
+                if (same_memory_cell(accumulator, *v2))
                 {
-                    mr_store(0);
-                    calculate_array_index(*v2);
-                    mr_store(1);
-                    mr_load(0);
-                    mr_addi(1);
+                    if (v1->isArray && v1->isIndexAVariable)
+                    {
+                        mr_store(0);
+                        calculate_array_index(*v1);
+                        mr_store(1);
+                        mr_load(0);
+                        mr_addi(1);
+                    }
+                    else
+                    {
+                        mr_add(get_real_index(*v1));
+                    }
                 }
                 else
                 {
-                    mr_add(get_real_index(*v2));
+                    load_variable_to_accumulator(*v1);
+                    if (v2->isArray && v2->isIndexAVariable)
+                    {
+                        mr_store(0);
+                        calculate_array_index(*v2);
+                        mr_store(1);
+                        mr_load(0);
+                        mr_addi(1);
+                    }
+                    else
+                    {
+                        mr_add(get_real_index(*v2));
+                    }
                 }
             }
         }
@@ -1107,11 +1136,10 @@ expression:
 
 condition:
       value OP_EQ value {
-        // -1 warunek zawsze prawdziwy
-        // -2 warunek zawsze fałszywy
-
         Variable *v1 = $1;
         Variable *v2 = $3;
+
+        accumulator = empty;
 
         condition_begin_ips.push(ip());
         // a = b <=> (a - b) + (b - a) = 0
@@ -1125,8 +1153,6 @@ condition:
         condition_end_ips.push(ip());
         mr_jump(-1);
 
-        accumulator = empty;
-        accumulator.value = 1;
         if (v1->name == "@" || v1->isArray) {
             delete v1;
         }
@@ -1139,6 +1165,8 @@ condition:
         Variable *v2 = $3;
 
         // a <> b
+        accumulator = empty;
+
         condition_begin_ips.push(ip());
         load_variable_to_accumulator(*v1);
         sub_from_acc(v2);
@@ -1149,8 +1177,6 @@ condition:
         condition_end_ips.push(ip());
         mr_jzero(-1);
 
-        accumulator = empty;
-        accumulator.value = 1;
         if (v1->name == "@" || v1->isArray) {
             delete v1;
         }
@@ -1163,14 +1189,14 @@ condition:
         Variable *v2 = $3;
 
         // a < b <=> 0 < b - a
+        accumulator = empty;
+
         condition_begin_ips.push(ip());
         load_variable_to_accumulator(*v2);
         sub_from_acc(v1);
         condition_end_ips.push(ip());
         mr_jzero(-1);
 
-        accumulator = empty;
-        accumulator.value = 1;
         if (v1->name == "@" || v1->isArray) {
             delete v1;
         }
@@ -1182,6 +1208,8 @@ condition:
         Variable *v1 = $1;
         Variable *v2 = $3;
 
+        accumulator = empty;
+
         // a > b <=> a - b > 0
         condition_begin_ips.push(ip());
         load_variable_to_accumulator(*v1);
@@ -1189,8 +1217,6 @@ condition:
         condition_end_ips.push(ip());
         mr_jzero(-1);
 
-        accumulator = empty;
-        accumulator.value = 1;
         if (v1->name == "@" || v1->isArray) {
             delete v1;
         }
@@ -1202,6 +1228,8 @@ condition:
         Variable *v1 = $1;
         Variable *v2 = $3;
 
+        accumulator = empty;
+
         // a <= b <=> a - b <= 0 <=> a - b = 0
         condition_begin_ips.push(ip());
         load_variable_to_accumulator(*v1);
@@ -1210,8 +1238,6 @@ condition:
         condition_end_ips.push(ip());
         mr_jump(-1);
 
-        accumulator = empty;
-        accumulator.value = 1;
         if (v1->name == "@" || v1->isArray) {
             delete v1;
         }
@@ -1223,6 +1249,8 @@ condition:
         Variable *v1 = $1;
         Variable *v2 = $3;
 
+        accumulator = empty;
+
         // a >= b <=> 0 >= b - a <=> 0 = b - a
         condition_begin_ips.push(ip());
         load_variable_to_accumulator(*v2);
@@ -1231,8 +1259,6 @@ condition:
         condition_end_ips.push(ip());
         mr_jump(-1);
 
-        accumulator = empty;
-        accumulator.value = 1;
         if (v1->name == "@" || v1->isArray) {
             delete v1;
         }

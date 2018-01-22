@@ -1,0 +1,11 @@
+VAR
+    a b
+BEGIN
+    a := 5;
+    READ b;
+    a := a + b; ( 5 + b )
+    b := a + b; ( 5 + 2b )
+    a := b + 10; ( 15 + 2b )
+    b := a + a; ( 30 + 4b )
+    WRITE b;
+END
