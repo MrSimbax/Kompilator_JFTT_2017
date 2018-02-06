@@ -1,6 +1,16 @@
-# Kompilator JFTT 2017
+# Kompilator JFTT 2017/2018
 
-## Autor
+Projekt kompilatora dla specjalnego języka programowania i maszyny
+rejestrowej w ramach przedmiotu _Języki formalne i techniki translacji_.
+
+Kompilator zajął **16. miejsce** pod względem szybkości kodu wynikowego
+na 85 osób biorących udział w "konkursie".
+
+Dokładna specyfikacja od wykładowcy
+znajduje się w pliku `specyfikacja.pdf`. Kod interpretera dla maszyny
+rejestrowej znajduje się w katalogu `interpreter`.
+
+## Autor kompilatora
 
 Mateusz Przybył
 
@@ -9,7 +19,8 @@ Mateusz Przybył
 W głównym katalogu użyć polecenia `make`.
 Aby wyczyścić katalog z powstałych plików, użyć `make clean`.
 
-**Uwaga.** Wymagana jest zainstalowana biblioteka `cln`.
+**Uwaga.** Wymagana jest zainstalowana biblioteka `cln` do obsługi
+dużych liczb, oraz `BISON` i `FLEX`.
 
 ## Uruchomienie
 

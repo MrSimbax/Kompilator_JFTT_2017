@@ -390,7 +390,6 @@ void multiply(Variable *v1, Variable *v2)
     mr_load(idr); // return
 }
 
-// 3,4,5,6
 void divide(Variable *v1, Variable *v2)
 {
     cl_I ida = 2;
@@ -457,7 +456,6 @@ void divide(Variable *v1, Variable *v2)
     mr_zero(); // Return 0
 }
 
-// 3,4,5,6
 void modulo(Variable *v1, Variable *v2)
 {
     cl_I ida = 2;
@@ -522,7 +520,6 @@ void modulo(Variable *v1, Variable *v2)
     mr_zero(); // Return 0
 }
 
-// 0,1
 void sub_from_acc(Variable *v2)
 {
     if (v2->isArray && v2->isIndexAVariable)
